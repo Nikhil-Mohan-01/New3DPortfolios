@@ -1010,3 +1010,86 @@ kbd {
 body.is-started .spotify-dock {
   visibility: visible;
 }
+
+/* view counter — bottom right ticker */
+.view-counter {
+  position: fixed;
+  right: 22px;
+  bottom: 22px;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  height: 30px;
+  padding: 0 14px 0 12px;
+  overflow: hidden;
+  font-family: var(--cond);
+  font-size: 14px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+  background: var(--glass);
+  backdrop-filter: blur(10px);
+  border: 1px solid var(--line);
+  border-left: 3px solid var(--red);
+  pointer-events: none;
+  animation: vcIn 0.5s ease;
+}
+.view-counter b {
+  color: var(--ink);
+  font-weight: 700;
+}
+.vc-dot {
+  flex: none;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--red);
+  box-shadow: 0 0 8px var(--red);
+  animation: vcPulse 1.6s ease-in-out infinite;
+}
+.vc-track {
+  display: flex;
+  flex-direction: column;
+  height: 56px;
+  align-self: flex-start;
+  transition: transform 0.55s cubic-bezier(0.6, 0, 0.2, 1);
+}
+.vc-slide {
+  height: 28px;
+  line-height: 28px;
+  white-space: nowrap;
+}
+@keyframes vcPulse {
+  50% {
+    opacity: 0.3;
+  }
+}
+@keyframes vcIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+}
+/* the fight-card strip spans the bottom on narrower screens: sit just above it,
+   and lift the strike counter clear of it */
+@media (max-width: 1520px) {
+  body.is-started .view-counter {
+    bottom: 102px;
+  }
+  .strikes {
+    bottom: 150px;
+  }
+}
+@media (max-width: 760px) {
+  .strikes {
+    bottom: 76px;
+  }
+  .view-counter,
+  body.is-started .view-counter {
+    top: 182px;
+    bottom: auto;
+    right: 12px;
+    font-size: 12px;
+  }
+}

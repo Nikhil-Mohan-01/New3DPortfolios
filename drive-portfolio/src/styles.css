@@ -709,7 +709,7 @@ kbd {
   }
   .passing {
     top: auto;
-    bottom: 120px;
+    bottom: 240px;
     right: 12px;
     left: 12px;
     width: auto;
@@ -761,14 +761,86 @@ kbd {
   border: 0;
   display: block;
 }
-@media (max-width: 720px) {
-  .spotify-dock {
-    left: 12px;
-    bottom: 112px;
-    width: 240px;
-  }
-}
-
 body.is-started .spotify-dock {
   visibility: visible;
+}
+
+/* view counter — bottom right ticker */
+.view-counter {
+  position: fixed;
+  right: 22px;
+  bottom: 22px;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  height: 30px;
+  padding: 0 13px 0 11px;
+  overflow: hidden;
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--muted);
+  background: var(--glass);
+  backdrop-filter: blur(14px);
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  box-shadow: 0 8px 26px rgba(0, 0, 0, 0.4);
+  pointer-events: none;
+  animation: vcIn 0.5s ease;
+}
+.view-counter b {
+  color: var(--ink);
+  font-weight: 600;
+}
+.vc-dot {
+  flex: none;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--cyan);
+  box-shadow: 0 0 8px var(--cyan);
+  animation: vcPulse 2s ease-in-out infinite;
+}
+.vc-track {
+  display: flex;
+  flex-direction: column;
+  height: 56px;
+  align-self: flex-start;
+  transition: transform 0.55s cubic-bezier(0.6, 0, 0.2, 1);
+}
+.vc-slide {
+  height: 28px;
+  line-height: 28px;
+  white-space: nowrap;
+}
+@keyframes vcPulse {
+  50% {
+    opacity: 0.35;
+  }
+}
+@keyframes vcIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+}
+/* the dashboard spans the bottom on narrower screens: sit just above it */
+@media (max-width: 1340px) {
+  body.is-started .view-counter {
+    bottom: 162px;
+  }
+}
+@media (max-width: 720px) {
+  .view-counter {
+    right: 12px;
+    font-size: 11px;
+  }
+  body.is-started .view-counter {
+    bottom: 112px;
+  }
+  .spotify-dock {
+    left: 12px;
+    bottom: 150px;
+    width: min(300px, calc(100vw - 24px));
+  }
 }

@@ -4,6 +4,7 @@ import { armAutoplay } from './audio/crowd';
 import World from './scene/World';
 import Hud, { Intro, Panel } from './ui/Hud';
 import ListView from './ui/ListView';
+import ViewCounter from './ui/ViewCounter';
 import { useUI } from './state';
 
 function hasWebGL() {
@@ -19,7 +20,13 @@ export default function App() {
   const ui = useUI();
   const webgl = useMemo(hasWebGL, []);
   useEffect(() => armAutoplay(), []);
-  if (!webgl) return <ListView canDrive={false} />;
+  if (!webgl)
+    return (
+      <>
+        <ListView canDrive={false} />
+        <ViewCounter />
+      </>
+    );
 
   return (
     <>
@@ -40,6 +47,7 @@ export default function App() {
         </>
       )}
       {ui.view === 'list' && <ListView />}
+      <ViewCounter />
     </>
   );
 }
