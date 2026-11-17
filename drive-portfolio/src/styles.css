@@ -749,10 +749,13 @@ kbd {
   position: fixed;
   visibility: hidden;
   left: 22px;
-  bottom: 168px;
+  top: 76px;
   width: 300px;
   height: 80px;
-  border-radius: 12px;
+  /* shrunk to a mini player so it doesn't cover the console or the cards */
+  transform: scale(0.62);
+  transform-origin: top left;
+  border-radius: 14px;
   overflow: hidden;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
   z-index: 5;
@@ -763,6 +766,10 @@ kbd {
 }
 body.is-started .spotify-dock {
   visibility: visible;
+}
+/* the mini player sits top-left, so the "now passing" card starts below it */
+body.is-started .passing {
+  top: 136px;
 }
 
 /* view counter — bottom right ticker */
@@ -840,7 +847,14 @@ body.is-started .spotify-dock {
   }
   .spotify-dock {
     left: 12px;
+    top: auto;
     bottom: 150px;
-    width: min(300px, calc(100vw - 24px));
+    transform-origin: bottom left;
+  }
+}
+@media (max-width: 720px) {
+  body.is-started .passing {
+    top: auto;
+    bottom: 210px;
   }
 }

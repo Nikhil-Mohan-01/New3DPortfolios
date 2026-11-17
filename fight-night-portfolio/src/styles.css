@@ -991,7 +991,10 @@ kbd {
   width: 280px;
   height: 80px;
   overflow: hidden;
-  border-radius: 10px;
+  /* shrunk to a mini player so it doesn't cover the posters */
+  transform: scale(0.62);
+  transform-origin: top left;
+  border-radius: 14px;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
   z-index: 5;
 }
