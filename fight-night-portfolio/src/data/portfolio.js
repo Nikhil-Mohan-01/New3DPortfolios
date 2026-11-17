@@ -9,7 +9,8 @@ export const profile = {
   links: {
     github: 'https://github.com/Nikhil-Mohan-01',
     linkedin: 'https://www.linkedin.com/in/nikhil-mohan-7787372a6/',
-    email: 'mailto:nikhilmohan2007@gmail.com',
+    email: 'mailto:n24mohan@uwaterloo.ca',
+    resume: '/resume/Nikhil_Mohan_Resume.pdf',
   },
 };
 
