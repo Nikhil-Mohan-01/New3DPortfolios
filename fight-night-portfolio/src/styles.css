@@ -188,7 +188,7 @@ kbd {
 .lower-third {
   position: absolute;
   left: 22px;
-  bottom: 118px;
+  bottom: 112px;
   width: min(400px, calc(100vw - 44px));
   animation: ltIn 0.4s cubic-bezier(0.2, 0.9, 0.2, 1);
 }
@@ -324,6 +324,90 @@ kbd {
   font-size: 11px;
   opacity: 0.7;
   margin-top: 3px;
+}
+
+/* W / S walk pad */
+.walkpad {
+  position: absolute;
+  left: 50%;
+  bottom: 104px;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.wp-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 10px;
+  background: var(--glass);
+  border: 1px solid var(--line);
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  font-size: 14px;
+  clip-path: polygon(8px 0, 100% 0, calc(100% - 8px) 100%, 0 100%);
+  transition: background 0.12s, transform 0.12s;
+}
+.wp-btn:hover {
+  background: #1a1a1a;
+}
+.wp-btn .key {
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  background: #fff;
+  color: #000;
+  font-family: var(--display);
+  font-size: 18px;
+  box-shadow: 0 3px 0 #9a9a9a;
+  transition: transform 0.08s, box-shadow 0.08s, background 0.08s;
+}
+.wp-btn.held .key,
+.wp-btn:active .key {
+  transform: translateY(3px);
+  box-shadow: 0 0 0 #9a9a9a;
+  background: var(--gold);
+}
+.wp-count {
+  min-width: 70px;
+  text-align: center;
+  text-shadow: 0 1px 8px #000;
+}
+.wp-count b {
+  font-family: var(--display);
+  font-weight: 400;
+  font-size: 26px;
+}
+.wp-count span {
+  color: var(--muted);
+  margin-left: 4px;
+}
+.walk-hint {
+  position: absolute;
+  bottom: calc(100% + 12px);
+  left: 50%;
+  transform: translateX(-50%);
+  white-space: nowrap;
+  padding: 8px 14px;
+  background: var(--red);
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  font-size: 14px;
+  animation: hintPulse 1.4s ease-in-out infinite;
+}
+.walk-hint kbd {
+  background: #fff;
+  color: #000;
+  border: none;
+}
+@keyframes hintPulse {
+  50% {
+    transform: translateX(-50%) translateY(-4px);
+  }
 }
 
 /* fight-card strip */
@@ -488,6 +572,9 @@ kbd {
   font-size: clamp(30px, 5vw, 58px);
   color: #cfd8ff;
   text-shadow: 3px 3px 0 #1d3f99;
+}
+.corner .blue-sub {
+  color: #9db8ff;
 }
 .corner p {
   margin: 0;
@@ -857,6 +944,20 @@ kbd {
     right: 12px;
     bottom: 76px;
   }
+  .walkpad {
+    bottom: 136px;
+    left: 12px;
+    transform: none;
+  }
+  .wp-btn .lbl {
+    display: none;
+  }
+  .walk-hint {
+    white-space: normal;
+    width: 220px;
+    left: 0;
+    transform: none;
+  }
   .strike-btns button {
     width: 64px;
     height: 48px;
@@ -879,4 +980,33 @@ kbd {
     animation: none !important;
     transition: none !important;
   }
+}
+
+/* Spotify's embed player (walkout song) */
+.spotify-dock {
+  position: fixed;
+  visibility: hidden;
+  left: 22px;
+  top: 74px;
+  width: 280px;
+  height: 80px;
+  overflow: hidden;
+  border-radius: 10px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+  z-index: 5;
+}
+.spotify-dock iframe {
+  border: 0;
+  display: block;
+}
+@media (max-width: 760px) {
+  .spotify-dock {
+    left: 12px;
+    top: 64px;
+    width: 220px;
+  }
+}
+
+body.is-started .spotify-dock {
+  visibility: visible;
 }

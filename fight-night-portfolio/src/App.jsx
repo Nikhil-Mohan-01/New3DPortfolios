@@ -1,5 +1,6 @@
 import { Canvas } from '@react-three/fiber';
-import { useMemo } from 'react';
+import { useEffect, useMemo } from 'react';
+import { armAutoplay } from './audio/crowd';
 import World from './scene/World';
 import Hud, { Intro, Panel } from './ui/Hud';
 import ListView from './ui/ListView';
@@ -17,6 +18,7 @@ function hasWebGL() {
 export default function App() {
   const ui = useUI();
   const webgl = useMemo(hasWebGL, []);
+  useEffect(() => armAutoplay(), []);
   if (!webgl) return <ListView canDrive={false} />;
 
   return (

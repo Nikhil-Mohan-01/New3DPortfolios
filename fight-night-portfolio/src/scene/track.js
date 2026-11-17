@@ -7,16 +7,17 @@ export const STAGE_H = 1.1; // platform height
 export const POSTER_R = 16.2; // poster ring radius
 export const CROWD_R = 18.5; // first crowd row
 export const EYE_Y = 1.72;
+export const RING_R = 3.3; // how far you circle from the opponent
 export const UP = new THREE.Vector3(0, 1, 0);
 
-// ---- The walkway: a closed loop around the cage --------------------------
+// ---- The path: a closed loop circling the opponent INSIDE the octagon ------
 function makeCurve() {
   const pts = [];
   const N = 24;
   for (let i = 0; i < N; i++) {
     const a = (i / N) * Math.PI * 2;
-    const r = 11.4 + 0.7 * Math.sin(2 * a + 0.6) + 0.35 * Math.cos(3 * a);
-    pts.push(new THREE.Vector3(Math.cos(a) * r, 0, -Math.sin(a) * r));
+    const r = RING_R + 0.3 * Math.sin(3 * a + 0.6);
+    pts.push(new THREE.Vector3(Math.cos(a) * r, STAGE_H, -Math.sin(a) * r));
   }
   const c = new THREE.CatmullRomCurve3(pts, true, 'centripetal');
   c.arcLengthDivisions = 2000;
@@ -63,14 +64,14 @@ const sequence = [
 ];
 
 const slot = LENGTH / sequence.length;
-export const posters = sequence.map((item, i) => ({ ...item, s: 2 + i * slot }));
+export const posters = sequence.map((item, i) => ({ ...item, s: 0.2 + i * slot }));
 
 export const sections = ['Weigh-in', 'Fight History', 'Fight Card', 'Training Camp', 'Contact'].map((name, i) => {
   const first = posters.find((s) => s.section === name);
   return { name, round: i + 1, s: first.s };
 });
 
-export const VIEW_OFFSET = 0.6;
+export const VIEW_OFFSET = 0;
 
 /** World position + facing for a poster stop: on the outer ring, facing the cage. */
 export function posterPlacement(stop) {

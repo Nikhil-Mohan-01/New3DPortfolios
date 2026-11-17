@@ -12,6 +12,7 @@ outside the driver's (right-hand) window.
 | Space / **Cruise** | Auto-drive |
 | Click a poster, Enter, **Open details** | Open the details panel |
 | Route bar (bottom) | Drive to any stop |
+| Centre-console touchscreen, P / N / B / M | Play-pause, next, previous, mute the playlist |
 | **List view** | Plain readable page (also used automatically when WebGL is missing) |
 
 ## Where things live
@@ -22,6 +23,10 @@ outside the driver's (right-hand) window.
 - `src/scene/City.jsx` — procedural road, buildings, neon signs, lamps, section gates.
 - `src/scene/Posters.jsx` + `textures.js` — poster buildings and the canvas-drawn poster art.
 - `public/models/r34/r34-runtime.glb` — optimised car (12.6 MB → 2.4 MB, meshopt + WebP). See `ATTRIBUTION.md` there: the model is **CC BY-NC-SA 4.0** by Ddiaz Design, credited in the intro and list view.
+
+## Music
+
+The playlist (Drake, Travis Scott, Michael Jackson) streams through Spotify's official embed player (`src/audio/playlist.js`) — in-page, no redirect, nothing hosted by this site. The centre console and the top-bar button control it; Spotify's player is docked bottom-left. Visitors logged in to Spotify in their browser hear full tracks; everyone else gets Spotify's 30-second previews. Sound starts on the first click/tap/key (browsers block it before that). Tune the screen's placement with `?console=x,y,z,pitch,yaw`.
 
 ## Scripts
 

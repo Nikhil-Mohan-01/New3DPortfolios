@@ -3,7 +3,26 @@ import { useProgress } from '@react-three/drei';
 import { profile, projects, experience, education } from '../data/portfolio';
 import { uiStore, useUI, walk } from '../state';
 import { LENGTH, posters, sections, wrap } from '../scene/track';
-import { strike, walkTo } from '../scene/Rig';
+import { stepStop, strike, walkTo } from '../scene/Rig';
+import { isMuted, isRunning, onAudioChange, setMuted, startAudio } from '../audio/crowd';
+
+function SoundToggle() {
+  const [, force] = useState(0);
+  useEffect(() => onAudioChange(() => force((n) => n + 1)), []);
+  const on = isRunning() && !isMuted();
+  return (
+    <button
+      className={`chip-btn ${on ? 'on' : ''}`}
+      onClick={() => {
+        if (!isRunning()) return startAudio();
+        setMuted(!isMuted());
+      }}
+      aria-label={on ? 'Mute sound' : 'Unmute sound'}
+    >
+      {on ? '🔊 Sound' : '🔇 Sound'}
+    </button>
+  );
+}
 
 export const Icon = {
   github: (
@@ -65,6 +84,10 @@ function useTicker() {
         auto: walk.auto,
         hits: n ? walk.hits[n.id]?.count || 0 : 0,
         landed: walk.landed,
+        index: n ? posters.indexOf(n) + 1 : 1,
+        fwd: !!walk.keys?.fwd,
+        back: !!walk.keys?.back,
+        moved: walk.stepped || Math.abs(walk.progress) > 1,
       });
     }, 90);
     return () => clearInterval(id);
@@ -114,6 +137,9 @@ function FightCard({ u }) {
 
 export default function Hud() {
   const ui = useUI();
+  useEffect(() => {
+    document.body.classList.toggle('is-started', !!ui.started && ui.view !== 'list');
+  }, [ui.started, ui.view]);
   const t = useTicker();
   const s = t.w > 0.5 ? strap(t.nearest) : null;
 
@@ -133,8 +159,9 @@ export default function Hud() {
         </div>
         <div className="top-actions">
           <button className={`chip-btn ${t.auto ? 'on' : ''}`} onClick={() => ((walk.auto = !walk.auto), uiStore.set({ started: true }))}>
-            {t.auto ? '■ Auto-walk' : '▶ Auto-walk'}
+            {t.auto ? '■ Auto-circle' : '▶ Auto-circle'}
           </button>
+          <SoundToggle />
           <button className="chip-btn" onClick={() => uiStore.set({ view: 'list' })}>
             ☰ List view
           </button>
@@ -145,8 +172,6 @@ export default function Hud() {
       {s && !ui.open && (
         <div className="lower-third" key={t.nearest.id} style={{ '--accent': accentOf(t.nearest) }}>
           <div className="lt-tag">{s.tag}</div>
-          <div className="lt-name">{s.title}</div>
-          <div className="lt-sub">{s.sub}</div>
           <div className="lt-actions">
             <button onClick={() => uiStore.set({ open: t.nearest.id })}>
               Open <kbd>Enter</kbd>
@@ -155,7 +180,7 @@ export default function Hud() {
               {[0, 1, 2].map((i) => (
                 <i key={i} className={i < t.hits ? 'on' : ''} />
               ))}
-              <em>strike to KO</em>
+              <em>KO Nikhil to open</em>
             </span>
           </div>
         </div>
@@ -175,11 +200,32 @@ export default function Hud() {
         </div>
       </div>
 
+      <div className="walkpad">
+        {!t.moved && ui.started && (
+          <div className="walk-hint">
+            Press <kbd>W</kbd> to step to the next card · <kbd>S</kbd> to go back
+          </div>
+        )}
+        <button className={`wp-btn ${t.back ? 'held' : ''}`} onClick={() => stepStop(-1)} aria-label="Previous card (S)">
+          <span className="key">S</span>
+          <span className="lbl">◀ Back</span>
+        </button>
+        <div className="wp-count">
+          <b>{String(t.index).padStart(2, '0')}</b>
+          <span>/ {posters.length}</span>
+        </div>
+        <button className={`wp-btn ${t.fwd ? 'held' : ''}`} onClick={() => stepStop(1)} aria-label="Next card (W)">
+          <span className="lbl">Next ▶</span>
+          <span className="key">W</span>
+        </button>
+      </div>
+
       <footer className="footer">
         <FightCard u={t.u} />
         <div className="hint">
           <span>
-            <kbd>Scroll</kbd> walk
+            <kbd>W</kbd>
+            <kbd>S</kbd> / <kbd>Scroll</kbd> walk
           </span>
           <span>
             <kbd>Drag</kbd> look
@@ -189,7 +235,7 @@ export default function Hud() {
             <kbd>K</kbd> strike
           </span>
           <span>
-            <kbd>Space</kbd> auto-walk
+            <kbd>Space</kbd> auto-circle
           </span>
         </div>
       </footer>
@@ -234,19 +280,16 @@ export function Intro() {
           <div className="vs">VS</div>
           <div className="corner blue">
             <small>Blue corner</small>
-            <h2>
-              Your hardest
-              <br />
-              problem
-            </h2>
+            <h2>You</h2>
+            <p className="blue-sub">the challenger</p>
           </div>
         </div>
         <p className="intro-sub">
           {profile.role} · {profile.school}. {profile.tagline}
         </p>
         <p className="intro-how">
-          <b>Scroll</b> to walk the arena · <b>drag</b> to look around · <b>J / K</b> to throw strikes — land three on a poster
-          to knock it open.
+          Step into the cage. <b>W / S</b> (or scroll) to circle him and move through the fight card · <b>drag</b> to look around ·{' '}
+          <b>J / K</b> to throw strikes — land three to knock him down and open the card.
         </p>
         <div className="intro-actions">
           <button className="cta" disabled={!ready} onClick={() => uiStore.set({ started: true })}>

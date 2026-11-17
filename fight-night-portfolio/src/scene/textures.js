@@ -398,3 +398,104 @@ export function makeJumboCanvas() {
   };
   return { texture: t, draw };
 }
+
+// ---------------------------------------------------------------------------
+// Broadcast "tale of the tape" card shown next to the opponent — 1024 x 640
+export function makeCardTexture(stop) {
+  const CW = 1024;
+  const CH = 640;
+  const [c, ctx] = canvas(CW, CH);
+  const d = stop.data;
+  const accent = d?.color || { intro: RED, experience: '#3b82f6', education: '#22c55e', contact: GOLD }[stop.kind];
+  ctx.fillStyle = 'rgba(6,6,6,0.94)';
+  ctx.fillRect(0, 0, CW, CH);
+  const g = ctx.createLinearGradient(0, 0, CW, 0);
+  g.addColorStop(0, hexA(accent, 0.35));
+  g.addColorStop(0.6, 'rgba(0,0,0,0)');
+  ctx.fillStyle = g;
+  ctx.fillRect(0, 0, CW, CH);
+  // header bar
+  ctx.fillStyle = RED;
+  ctx.beginPath();
+  ctx.moveTo(0, 0);
+  ctx.lineTo(CW * 0.62, 0);
+  ctx.lineTo(CW * 0.62 - 40, 84);
+  ctx.lineTo(0, 84);
+  ctx.fill();
+  ctx.fillStyle = accent;
+  ctx.fillRect(0, 84, CW, 6);
+  ctx.strokeStyle = GOLD;
+  ctx.lineWidth = 6;
+  ctx.strokeRect(3, 3, CW - 6, CH - 6);
+
+  let tag = '';
+  let title = '';
+  let sub = '';
+  let body = '';
+  let chips = [];
+  if (stop.kind === 'project') {
+    tag = `BOUT ${String(stop.index).padStart(2, '0')} · ${stop.billing}`;
+    title = d.title;
+    sub = d.kicker;
+    body = d.summary;
+    chips = d.stack;
+  } else if (stop.kind === 'experience') {
+    tag = 'FIGHT HISTORY';
+    title = d.company;
+    sub = d.role;
+    body = d.blurb;
+  } else if (stop.kind === 'education') {
+    tag = 'TRAINING CAMP';
+    title = d.name;
+    body = d.detail;
+  } else if (stop.kind === 'intro') {
+    tag = 'RED CORNER · OFFICIAL WEIGH-IN';
+    title = profile.name;
+    sub = `"The Engineer" · ${profile.role}`;
+    body = `${profile.school}. ${profile.tagline}`;
+  } else {
+    tag = 'NEXT FIGHT';
+    title = 'Book the fight';
+    sub = 'GitHub · LinkedIn · Email';
+    body = profile.links.email.replace('mailto:', '');
+  }
+
+  ctx.textBaseline = 'middle';
+  ctx.fillStyle = '#fff';
+  ctx.font = `700 40px ${COND}`;
+  ctx.fillText(tag.toUpperCase(), 34, 44);
+  ctx.textBaseline = 'alphabetic';
+  const size = fit(ctx, title.toUpperCase(), DISPLAY, 400, CW - 80, 130, 56);
+  ctx.fillStyle = '#fff';
+  ctx.fillText(title.toUpperCase(), 34, 110 + size);
+  let y = 110 + size + 58;
+  if (sub) {
+    ctx.fillStyle = GOLD;
+    ctx.font = `700 40px ${COND}`;
+    ctx.fillText(sub.toUpperCase(), 36, y);
+    y += 58;
+  }
+  ctx.fillStyle = '#e6e6e6';
+  ctx.font = `500 38px ${COND}`;
+  for (const l of wrapLines(ctx, body, CW - 80).slice(0, 3)) {
+    ctx.fillText(l, 36, y);
+    y += 46;
+  }
+  let x = 36;
+  for (const s of chips.slice(0, 6)) {
+    ctx.font = `600 30px ${COND}`;
+    const w = ctx.measureText(s).width + 30;
+    if (x + w > CW - 36) break;
+    ctx.fillStyle = hexA(accent, 0.22);
+    ctx.fillRect(x, CH - 112, w, 46);
+    ctx.fillStyle = '#fff';
+    ctx.fillText(s, x + 15, CH - 78);
+    x += w + 10;
+  }
+  ctx.fillStyle = hexA('#ffffff', 0.55);
+  ctx.font = `700 26px ${COND}`;
+  ctx.textAlign = 'right';
+  ctx.fillText('LAND 3 STRIKES (J/K) TO KO & OPEN  ·  OR CLICK', CW - 30, CH - 26);
+  ctx.textAlign = 'left';
+  return tex(c, { aniso: 8 });
+}

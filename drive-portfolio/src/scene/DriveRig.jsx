@@ -3,6 +3,8 @@ import { useFrame, useThree } from '@react-three/fiber';
 import { PerspectiveCamera } from '@react-three/drei';
 import * as THREE from 'three';
 import Car from './Car';
+import ConsoleScreen from './ConsoleScreen';
+import { controls } from '../audio/playlist';
 import { LANE_OFFSET, LENGTH, frameAt, loopDelta, posters, VIEW_OFFSET, wrap } from './track';
 import { posterWorld } from './Posters';
 import { drive, uiStore } from '../state';
@@ -99,6 +101,10 @@ export function useDriveInput() {
         drive.cruise = !drive.cruise;
         if (!ui.started) uiStore.set({ started: true });
       }
+      if (k === 'p') controls.toggle();
+      if (k === 'n') controls.next();
+      if (k === 'b') controls.prev();
+      if (k === 'm') controls.mute();
       if (k === 'enter' && drive.nearest && drive.nearestWeight > 0.4) uiStore.set({ open: drive.nearest.id });
     };
     const onKeyUp = (e) => held.delete(e.key.toLowerCase());
@@ -219,6 +225,7 @@ export default function DriveRig() {
   return (
     <group ref={car}>
       <Car />
+      <ConsoleScreen />
       <PerspectiveCamera ref={cam} makeDefault fov={68} near={0.03} far={1400} position={EYE.toArray()} />
       {/* headlights */}
       <spotLight ref={head} position={[0, 0.75, 2.3]} angle={0.5} penumbra={0.7} intensity={900} distance={90} decay={2} color="#fff1d6" />

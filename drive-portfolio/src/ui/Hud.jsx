@@ -4,6 +4,20 @@ import { profile, projects, experience, education } from '../data/portfolio';
 import { drive, uiStore, useUI } from '../state';
 import { LENGTH, posters, sections, wrap } from '../scene/track';
 import { driveTo } from '../scene/DriveRig';
+import { TRACKS, controls, player } from '../audio/playlist';
+import { useSyncExternalStore } from 'react';
+
+function NowPlaying() {
+  useSyncExternalStore(player.subscribe, () => player.get().version);
+  const s = player.get();
+  if (!s.available.some(Boolean)) return null;
+  const tr = TRACKS[s.index];
+  return (
+    <button className={`chip-btn now-playing ${s.playing ? 'on' : ''}`} onClick={() => controls.toggle()} title="Play / pause (P) · next (N) · previous (B)">
+      {s.playing ? '♪' : '▶'} <span>{tr.title}</span> <em>{tr.artist}</em>
+    </button>
+  );
+}
 
 // ---------------------------------------------------------------------------
 export const Icon = {
@@ -141,6 +155,9 @@ function Route({ u }) {
 
 export default function Hud() {
   const ui = useUI();
+  useEffect(() => {
+    document.body.classList.toggle('is-started', !!ui.started && ui.view !== 'list');
+  }, [ui.started, ui.view]);
   const t = useTicker();
   const card = t.w > 0.55 ? nearestCard(t.nearest) : null;
 
@@ -155,6 +172,7 @@ export default function Hud() {
           <button className={`chip-btn ${t.cruise ? 'on' : ''}`} onClick={() => ((drive.cruise = !drive.cruise), uiStore.set({ started: true }))}>
             {t.cruise ? '■ Cruise on' : '▶ Cruise'}
           </button>
+          <NowPlaying />
           <button className="chip-btn" onClick={() => uiStore.set({ view: 'list' })}>
             ☰ List view
           </button>
@@ -193,6 +211,10 @@ export default function Hud() {
             </span>
             <span>
               <kbd>Click</kbd> a poster
+            </span>
+            <span>
+              <kbd>P</kbd>
+              <kbd>N</kbd> music · tap the console
             </span>
           </div>
         </div>

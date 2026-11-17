@@ -123,6 +123,16 @@ kbd {
   color: #fff;
   box-shadow: 0 0 18px rgba(255, 46, 136, 0.45);
 }
+.now-playing {
+  max-width: 260px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.now-playing em {
+  font-style: normal;
+  color: var(--muted);
+}
 .socials {
   display: flex;
   gap: 6px;
@@ -147,8 +157,7 @@ kbd {
 .passing {
   position: absolute;
   left: 22px;
-  top: 50%;
-  transform: translateY(-50%);
+  top: 76px;
   width: min(340px, 42vw);
   padding: 16px 18px 18px;
   background: var(--glass);
@@ -192,7 +201,7 @@ kbd {
 @keyframes slideIn {
   from {
     opacity: 0;
-    transform: translate(-30px, -50%);
+    transform: translateX(-30px);
   }
 }
 
@@ -733,4 +742,33 @@ kbd {
     animation: none !important;
     transition: none !important;
   }
+}
+
+/* Spotify's embed player, docked like a phone on a dash mount */
+.spotify-dock {
+  position: fixed;
+  visibility: hidden;
+  left: 22px;
+  bottom: 168px;
+  width: 300px;
+  height: 80px;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+  z-index: 5;
+}
+.spotify-dock iframe {
+  border: 0;
+  display: block;
+}
+@media (max-width: 720px) {
+  .spotify-dock {
+    left: 12px;
+    bottom: 112px;
+    width: 240px;
+  }
+}
+
+body.is-started .spotify-dock {
+  visibility: visible;
 }
